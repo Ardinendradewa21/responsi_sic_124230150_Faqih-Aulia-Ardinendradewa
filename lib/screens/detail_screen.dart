@@ -5,6 +5,7 @@ import '../services/local_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final Movie movie;
+
   const DetailScreen({super.key, required this.movie});
 
   @override
@@ -23,7 +24,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
   void _checkFavoriteStatus() async {
     bool status = await _localService.isFavorite(widget.movie.id);
-    setState(() => _isFavorite = status);
+    setState(() {
+      _isFavorite = status;
+    });
   }
 
   void _toggleFavorite() async {
@@ -54,17 +57,23 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final movie = widget.movie;
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
+          // --- 1. GAMBAR HEADER (PARALLAX) ---
           SliverAppBar(
             expandedHeight: 400.0,
             pinned: true,
             backgroundColor: const Color(0xFF5C6BC0),
             flexibleSpace: FlexibleSpaceBar(
               background: CachedNetworkImage(
-                imageUrl: widget.movie.imageUrl,
+                imageUrl: movie.imageUrl,
                 fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Container(color: Colors.grey[300]),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             leading: Container(
@@ -95,6 +104,8 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ],
           ),
+
+          // --- 2. KONTEN DETAIL LENGKAP ---
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
@@ -107,6 +118,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Garis Indikator Kecil
                     Center(
                       child: Container(
                         width: 40,
@@ -118,8 +130,10 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
+
+                    // Judul Film
                     Text(
-                      widget.movie.title,
+                      movie.title,
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -127,15 +141,17 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
+
+                    // Baris 1: Genre, Tahun, Rating
                     Row(
                       children: [
-                        _tag(widget.movie.genre, Colors.blue),
+                        _tag(movie.genre, Colors.blue),
                         const SizedBox(width: 10),
-                        _tag(widget.movie.releaseDate, Colors.orange),
+                        _tag(movie.releaseDate.split('-').first, Colors.orange),
                         const Spacer(),
                         const Icon(Icons.star, color: Colors.amber, size: 24),
                         Text(
-                          " ${widget.movie.rating}",
+                          " ${movie.rating}",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -143,7 +159,48 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
+
+                    // Baris 2: Durasi & Bahasa (DATA BARU)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          movie.duration,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        const Icon(
+                          Icons.language,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          movie.language,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+
                     const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 16),
+
+                    // Sinopsis / Description
                     const Text(
                       "Synopsis",
                       style: TextStyle(
@@ -151,15 +208,79 @@ class _DetailScreenState extends State<DetailScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
-                      "This is a placeholder for synopsis...",
+                      movie.description,
                       style: TextStyle(
                         fontSize: 15,
-                        color: Colors.grey[600],
+                        color: Colors.grey[800],
                         height: 1.6,
                       ),
+                      textAlign: TextAlign.justify,
                     ),
+
+                    const SizedBox(height: 24),
+
+                    // Cast & Crew (DATA BARU)
+                    const Text(
+                      "Cast & Crew",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Director Row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: 80,
+                          child: Text(
+                            "Director",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            movie.director,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Cast Row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: 80,
+                          child: Text(
+                            "Cast",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            movie.cast,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(
+                      height: 40,
+                    ), // Spasi bawah agar scroll nyaman
                   ],
                 ),
               ),
@@ -170,6 +291,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  // Widget kecil untuk Chip Genre/Tahun
   Widget _tag(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

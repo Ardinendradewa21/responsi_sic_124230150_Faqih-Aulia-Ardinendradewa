@@ -1,10 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'movie_model.g.dart'; // File ini akan digenerate otomatis
+part 'movie_model.g.dart';
 
 @HiveType(typeId: 1)
 class Movie extends HiveObject {
-  // --- 1. DEFINISI VARIABEL (JANGAN DIHAPUS) ---
   @HiveField(0)
   final String id;
 
@@ -23,7 +22,22 @@ class Movie extends HiveObject {
   @HiveField(5)
   final String genre;
 
-  // --- 2. CONSTRUCTOR (JANGAN DIHAPUS) ---
+  @HiveField(6)
+  final String description;
+
+  // --- TAMBAHAN FIELD BARU (Sesuai JSON API) ---
+  @HiveField(7)
+  final String duration;
+
+  @HiveField(8)
+  final String director;
+
+  @HiveField(9)
+  final String cast; // Kita gabung array jadi String
+
+  @HiveField(10)
+  final String language;
+
   Movie({
     required this.id,
     required this.title,
@@ -31,54 +45,52 @@ class Movie extends HiveObject {
     required this.releaseDate,
     required this.rating,
     required this.genre,
+    required this.description,
+    required this.duration,
+    required this.director,
+    required this.cast,
+    required this.language,
   });
 
-  // --- 3. FACTORY FROM JSON (LOGIC ANTI ERROR) ---
   factory Movie.fromJson(Map<String, dynamic> json) {
-    // Fungsi bantuan: Apapun datanya, paksa jadi String
-    String safeString(dynamic value, {String defaultValue = '-'}) {
-      if (value == null) return defaultValue;
-      if (value is String) return value;
+    // Helper untuk List -> String (Genre & Cast)
+    String parseList(dynamic value) {
       if (value is List) {
-        // Jika datanya List ["Action", "Horror"], gabung jadi "Action, Horror"
-        return value.join(", ");
+        return value.map((e) => e.toString()).join(", ");
       }
-      return value.toString();
+      return value?.toString() ?? '-';
     }
 
-    // Fungsi bantuan khusus Gambar
-    String safeImage(dynamic value) {
-      if (value == null) return 'https://via.placeholder.com/150';
-      if (value is String) return value;
-      if (value is List && value.isNotEmpty) {
-        // Jika gambar dikirim sebagai list, ambil yang pertama
-        return value.first.toString();
-      }
-      return 'https://via.placeholder.com/150';
+    // Helper Rating
+    double parseRating(dynamic value) {
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      if (value is num) return value.toDouble();
+      return 0.0;
     }
 
     return Movie(
       id: json['id']?.toString() ?? '0',
+      title:
+          json['title']?.toString() ?? json['name']?.toString() ?? 'No Title',
+      imageUrl: json['imgUrl']?.toString() ?? 'https://via.placeholder.com/150',
+      releaseDate:
+          json['release_date']?.toString() ??
+          json['createdAt']?.toString() ??
+          '-',
+      rating: parseRating(json['rating']),
+      genre: parseList(json['genre']),
+      description:
+          json['description']?.toString() ??
+          json['synopsis']?.toString() ??
+          'No description.',
 
-      // Gunakan fungsi safeString untuk Title, ReleaseDate, dan Genre
-      title: safeString(
-        json['title'] ?? json['name'],
-        defaultValue: 'No Title',
+      // ambil data baru
+      duration: json['duration']?.toString() ?? '-',
+      director: json['director']?.toString() ?? '-',
+      language: json['language']?.toString() ?? '-',
+      cast: parseList(
+        json['cast'],
       ),
-
-      imageUrl: safeImage(json['image'] ?? json['imageUrl'] ?? json['avatar']),
-
-      releaseDate: safeString(json['release_date'] ?? json['createdAt']),
-
-      // Parsing Rating (Tetap sama seperti sebelumnya)
-      rating: (json['rating'] is int)
-          ? (json['rating'] as int).toDouble()
-          : (json['rating'] is String)
-          ? double.tryParse(json['rating']) ?? 0.0
-          : (json['rating'] as double? ?? 0.0),
-
-      // INI YANG SERING ERROR: Kita pasangi pengaman safeString
-      genre: safeString(json['genre'], defaultValue: 'Unknown'),
     );
   }
 }

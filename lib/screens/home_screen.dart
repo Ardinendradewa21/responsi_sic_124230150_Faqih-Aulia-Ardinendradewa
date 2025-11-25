@@ -173,6 +173,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: displayMovies.length,
                     itemBuilder: (context, index) {
                       final movie = displayMovies[index];
+
+                      print(
+                        "Judul: ${movie.title} | Link Gambar: ${movie.imageUrl}",
+                      );
                       return GestureDetector(
                         onTap: () => Navigator.push(
                           context,
