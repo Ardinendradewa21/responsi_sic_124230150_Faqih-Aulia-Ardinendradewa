@@ -21,71 +21,65 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     _loadFavorites();
   }
 
-  // Ambil data dari Hive
   void _loadFavorites() async {
     final data = await _localService.getFavorites();
-    setState(() {
-      _favorites = data;
-    });
+    setState(() => _favorites = data);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("My Favorite Movies")),
+      appBar: AppBar(title: const Text("Favorites")),
       body: _favorites.isEmpty
-          ? const Center(child: Text("Belum ada film favorit"))
+          ? const Center(child: Text("No favorites yet"))
           : ListView.builder(
               itemCount: _favorites.length,
               itemBuilder: (context, index) {
                 final movie = _favorites[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(8),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: CachedNetworkImage(
                         imageUrl: movie.imageUrl,
                         width: 50,
-                        height: 50,
+                        height: 80,
                         fit: BoxFit.cover,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
                       ),
                     ),
-                    title: Text(movie.title),
+                    title: Text(
+                      movie.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     subtitle: Text(movie.genre),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () async {
-                        // Fitur Hapus Langsung dari List Favorit
                         await _localService.removeFavorite(movie.id);
-                        _loadFavorites(); // Reload list agar item hilang dari layar
-
-                        if (mounted) {
+                        _loadFavorites();
+                        if (mounted)
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text("Dihapus dari Favorit"),
+                              content: Text("Removed"),
                               backgroundColor: Colors.red,
                             ),
                           );
-                        }
                       },
                     ),
-                    onTap: () {
-                      // Navigasi ke Detail
-                      // Gunakan .then() -> Agar saat kembali dari detail, list direfresh
-                      // (Siapa tahu user menghapus favorit dari halaman detail)
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailScreen(movie: movie),
-                        ),
-                      ).then((_) => _loadFavorites());
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(movie: movie),
+                      ),
+                    ).then((_) => _loadFavorites()),
                   ),
                 );
               },

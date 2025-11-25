@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:google_fonts/google_fonts.dart'; // Import Font
+import 'package:google_fonts/google_fonts.dart';
 import 'models/user_model.dart';
 import 'models/movie_model.dart';
 import 'screens/login_screen.dart';
@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
-  // Registrasi Adapter (Pastikan file .g.dart sudah digenerate)
+  // Register Adapter (Pastikan run build_runner dulu!)
   Hive.registerAdapter(UserAdapter());
   Hive.registerAdapter(MovieAdapter());
 
@@ -28,25 +28,13 @@ class MyApp extends StatelessWidget {
       title: 'Modern Movie App',
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(
-          0xFFF5F7FA,
-        ), // Background abu-abu muda lembut
-        // Skema Warna Indigo & Pink/Red
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF5C6BC0),
-          primary: const Color(0xFF5C6BC0),
-          secondary: const Color(0xFFFF6B6B),
-        ),
-
-        // Font Global: Poppins
+        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5C6BC0)),
         textTheme: GoogleFonts.poppinsTextTheme(),
-
-        // Tema AppBar default transparan & teks hitam
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           foregroundColor: const Color(0xFF2D3436),
-          centerTitle: false,
           titleTextStyle: GoogleFonts.poppins(
             color: const Color(0xFF2D3436),
             fontSize: 20,
@@ -57,14 +45,12 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<String?>(
         future: LocalService().getCurrentUser(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting)
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
-          }
-          if (snapshot.hasData && snapshot.data != null) {
+          if (snapshot.hasData && snapshot.data != null)
             return const HomeScreen();
-          }
           return const LoginScreen();
         },
       ),

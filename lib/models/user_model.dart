@@ -1,10 +1,8 @@
 import 'package:hive/hive.dart';
 
-// Baris ini akan error (merah) sampai kita jalankan build_runner.
-// Itu normal, abaikan saja dulu.
-part 'user_model.g.dart';
+part 'user_model.g.dart'; // Akan digenerate otomatis
 
-@HiveType(typeId: 0) // ID unik untuk User
+@HiveType(typeId: 0)
 class User extends HiveObject {
   @HiveField(0)
   final String username;

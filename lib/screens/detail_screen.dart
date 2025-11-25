@@ -131,10 +131,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       children: [
                         _tag(widget.movie.genre, Colors.blue),
                         const SizedBox(width: 10),
-                        _tag(
-                          widget.movie.releaseDate.split('-').first,
-                          Colors.orange,
-                        ),
+                        _tag(widget.movie.releaseDate, Colors.orange),
                         const Spacer(),
                         const Icon(Icons.star, color: Colors.amber, size: 24),
                         Text(
@@ -156,7 +153,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "This is a placeholder for the movie synopsis. The MockAPI might not provide a full description, but in a real app, this area would tell the story of the film.",
+                      "This is a placeholder for synopsis...",
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.grey[600],

@@ -17,24 +17,23 @@ class _LoginScreenState extends State<LoginScreen> {
   final LocalService _localService = LocalService();
 
   void _login() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-    bool isSuccess = await _localService.loginUser(username, password);
+    bool isSuccess = await _localService.loginUser(
+      _usernameController.text,
+      _passwordController.text,
+    );
 
     if (isSuccess && mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Login Gagal!"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Login Gagal!"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -46,11 +45,10 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Hello,\nWelcome Back!",
+                "Welcome Back!",
                 style: GoogleFonts.poppins(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -58,14 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-
               _modernTextField(
                 controller: _usernameController,
                 label: "Username",
                 icon: Icons.person_outline,
               ),
               const SizedBox(height: 20),
-
               _modernTextField(
                 controller: _passwordController,
                 label: "Password",
@@ -73,7 +69,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPassword: true,
               ),
               const SizedBox(height: 40),
-
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -81,8 +76,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF5C6BC0),
-                    elevation: 10,
-                    shadowColor: const Color(0xFF5C6BC0).withOpacity(0.4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -98,19 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
               Center(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterScreen(),
+                    ),
+                  ),
                   child: Text(
-                    "Don't have an account? Register",
+                    "Register New Account",
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ),
@@ -122,7 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Widget Custom Input Field Modern
   Widget _modernTextField({
     required TextEditingController controller,
     required String label,

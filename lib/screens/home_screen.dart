@@ -57,21 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5),
-                ],
-              ),
-              child: const Icon(
-                Icons.favorite,
-                color: Color(0xFFFF6B6B),
-                size: 20,
-              ),
-            ),
+            icon: const Icon(Icons.favorite, color: Color(0xFFFF6B6B)),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const FavoriteScreen()),
@@ -88,7 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
             },
           ),
-          const SizedBox(width: 10),
         ],
       ),
       body: FutureBuilder<List<Movie>>(
@@ -96,8 +81,21 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return const Center(child: CircularProgressIndicator());
+
+          // TAMPILKAN ERROR JIKA ADA
+          if (snapshot.hasError)
+            return Center(
+              child: Text(
+                "Error: ${snapshot.error}",
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+
           if (snapshot.hasData) {
             final allMovies = snapshot.data!;
+            if (allMovies.isEmpty)
+              return const Center(child: Text("No Movies Found (API Kosong)"));
+
             Set<String> genres = {"All", ...allMovies.map((m) => m.genre)};
             final displayMovies = _selectedGenre == "All"
                 ? allMovies
@@ -105,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return Column(
               children: [
-                // 1. Filter Chips Modern
+                // Filter Chips
                 SizedBox(
                   height: 60,
                   child: ListView.builder(
@@ -161,15 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-
-                // 2. Grid Movies
+                // Grid Film
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.all(20),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.7, // Rasio Poster
+                          childAspectRatio: 0.7,
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
                         ),
@@ -244,7 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontSize: 16,
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
                                       Row(
                                         children: [
                                           const Icon(
@@ -252,9 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: Colors.amber,
                                             size: 14,
                                           ),
-                                          const SizedBox(width: 4),
                                           Text(
-                                            "${movie.rating}",
+                                            " ${movie.rating}",
                                             style: const TextStyle(
                                               color: Colors.white70,
                                               fontSize: 12,
@@ -276,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             );
           }
-          return const Center(child: Text("No Movies Found"));
+          return const Center(child: Text("No Data"));
         },
       ),
     );
