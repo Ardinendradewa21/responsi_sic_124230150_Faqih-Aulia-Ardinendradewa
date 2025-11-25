@@ -46,7 +46,7 @@ class LocalService {
   // --- FAVORITE ---
   Future<void> addFavorite(Movie movie) async {
     final box = await Hive.openBox<Movie>(favBoxName);
-    await box.put(movie.id, movie); // Pakai ID sebagai key
+    await box.put(movie.id, movie);
   }
 
   Future<void> removeFavorite(String movieId) async {

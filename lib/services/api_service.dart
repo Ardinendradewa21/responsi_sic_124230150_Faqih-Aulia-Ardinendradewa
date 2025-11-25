@@ -3,11 +3,10 @@ import 'package:http/http.dart' as http;
 import '../models/movie_model.dart';
 
 class ApiService {
-  // Pastikan link ini sesuai dengan yang bisa diakses (gunakan link mockapi Anda)
   static const String baseUrl =
       'https://681388b3129f6313e2119693.mockapi.io/api/v1/movie';
 
-  // 1. Ambil Semua Film (Untuk Home)
+  //Ambil Semua Film (Untuk Home)
   Future<List<Movie>> getMovies() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
@@ -21,19 +20,16 @@ class ApiService {
       rethrow;
     }
   }
-
-  // 2. AMBIL DETAIL FILM (Fungsi Baru!)
-  // Mengakses: baseUrl/{id} sesuai temuan Anda
   Future<Movie> getMovieDetail(String id) async {
     try {
       final url = '$baseUrl/$id';
-      print("Mengambil detail dari: $url"); // Debugging
+      print("Mengambil detail dari: $url");
 
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return Movie.fromJson(data); // Parse satu data saja
+        return Movie.fromJson(data);
       } else {
         throw Exception('Gagal ambil detail');
       }

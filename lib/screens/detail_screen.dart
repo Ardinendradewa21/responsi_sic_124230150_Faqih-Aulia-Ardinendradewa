@@ -62,7 +62,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // --- 1. GAMBAR HEADER (PARALLAX) ---
+          // --- 1. HEADER DENGAN IMAGE ---
           SliverAppBar(
             expandedHeight: 400.0,
             pinned: true,
@@ -105,7 +105,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ],
           ),
 
-          // --- 2. KONTEN DETAIL LENGKAP ---
+          // --- 2. DETAIL FILM ---
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
@@ -161,7 +161,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Baris 2: Durasi & Bahasa (DATA BARU)
+                    // Baris 2: Duration & Language
                     Row(
                       children: [
                         const Icon(
@@ -221,7 +221,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
                     const SizedBox(height: 24),
 
-                    // Cast & Crew (DATA BARU)
                     const Text(
                       "Cast & Crew",
                       style: TextStyle(
@@ -278,9 +277,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       ],
                     ),
 
-                    const SizedBox(
-                      height: 40,
-                    ), // Spasi bawah agar scroll nyaman
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -291,7 +288,6 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  // Widget kecil untuk Chip Genre/Tahun
   Widget _tag(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
